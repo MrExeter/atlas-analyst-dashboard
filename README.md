@@ -2,9 +2,18 @@
 
 A professional analyst dashboard for **Atlas**, a production-grade agentic AI research system.
 
-This dashboard provides a clean interface for running AI-driven market analyses and reviewing structured results including evaluation scores, verdicts, latency, and technical output.
+This dashboard provides a secure, evaluation-aware interface for running AI-driven market analyses and reviewing structured executive results including evaluation scores, verdicts, latency, and technical output.
 
-This repository is intended as a professional showcase demonstrating evaluation-aware AI system UX.
+This repository is intended as a professional showcase demonstrating disciplined frontend architecture layered on top of a production cloud backend.
+
+---
+
+## Live Deployment
+
+- Dashboard: https://atlas.commandercoconut.com
+- Backend API (token-gated): https://api-atlas.commandercoconut.com
+
+Access is invitation-only via expiring Bearer tokens validated by the backend.
 
 ---
 
@@ -18,13 +27,14 @@ Atlas transforms a single research topic into a structured executive market brie
 - Synthesis
 - Automated evaluation
 
-This dashboard focuses on presenting those results in a clear, analyst-friendly workflow rather than functioning as a chatbot UI.
+This dashboard presents those results in a structured analyst workflow rather than a conversational chatbot interface.
 
 ---
 
 ## Features
 
 - Submit research topics to the Atlas backend
+- Secure Bearer-token authentication
 - Executive summary display
 - PASS / WARN / FAIL evaluation badge
 - Evaluation score breakdown
@@ -32,6 +42,16 @@ This dashboard focuses on presenting those results in a clear, analyst-friendly 
 - Live API health status indicator
 - Collapsible technical JSON view
 - Downloadable structured output (JSON)
+
+---
+
+## Security Model
+
+- No secrets stored in frontend code
+- No API keys embedded in the application
+- Authentication handled via per-invite Bearer tokens
+- Backend enforces expiration, revocation, and rate limiting
+- CORS restricted to production domain
 
 ---
 
@@ -45,17 +65,21 @@ This dashboard focuses on presenting those results in a clear, analyst-friendly 
 ---
 
 ## Architecture (High Level)
+
 ```
-User Topic
+User
 ↓
-Dashboard UI
+Dashboard UI (Static Hosting)
 ↓
-Atlas API
+HTTPS
+↓
+Atlas API (AWS ECS Fargate)
 ↓
 Agentic Research Pipeline
 ↓
 Evaluated Executive Report
 ```
+
 
 ---
 
@@ -67,38 +91,38 @@ Evaluated Executive Report
 npm install
 ```
 
-### 2. Create a `.env` file in the project root
-```bash
+### 2. Create a .env file in the project root
+
+```
 VITE_ATLAS_API_URL=http://localhost:8000
-VITE_ATLAS_API_KEY=replace_me
 ```
 
 ### 3. Run development server
-```bash
+
+```
 npm run dev
 ```
 
-## Environment Variables
+| Variable             | Description                       |
+| -------------------- | --------------------------------- |
+| `VITE_ATLAS_API_URL` | Base URL of the Atlas backend API |
 
-| Variable | Description |
-|----------|-------------|
-| `VITE_ATLAS_API_URL` | Base URL of the Atlas backend API (e.g. `http://localhost:8000`) |
-| `VITE_ATLAS_API_KEY` | API key used to authenticate requests from the dashboard |
+
 
 ## Project Goals
-
 ### This repository is intentionally focused on:
 
-- Clear system observability
 - Evaluation-aware AI workflows
-- Clean architecture and separation of concerns
+- Clean UX over agentic backend systems
+- Clear system observability
 - Production-minded engineering practices
 
 ### Non-goals include:
 
-- Complex frontend frameworks
 - Chat UI patterns
 - Heavy visualization layers
+- Public unauthenticated access
+
 
 ## License
 
@@ -123,5 +147,6 @@ AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
 LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
+
 
 

@@ -1,5 +1,5 @@
 import { Chip } from "@mui/material";
-import { Verdict } from "../types/atlas";
+import type { Verdict } from "../types/atlas";
 
 interface VerdictBadgeProps {
     verdict?: Verdict;

@@ -7,7 +7,7 @@ import {
     ListItem,
     ListItemText,
 } from "@mui/material";
-import { AtlasResponse } from "../types/atlas";
+import type { AtlasResponse } from "../types/atlas";
 import VerdictBadge from "./VerdictBadge";
 import DownloadJsonButton from "./DownloadJsonButton";
 
