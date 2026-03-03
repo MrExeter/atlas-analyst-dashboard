@@ -1,29 +1,32 @@
-import { AtlasResponse } from "../types/atlas";
+import type { AtlasResponse } from "../types/atlas";
+import { getToken, clearToken } from "../auth/token";
 
 const API_URL = import.meta.env.VITE_ATLAS_API_URL;
-const API_KEY = import.meta.env.VITE_ATLAS_API_KEY;
 
 export async function runAnalysis(topic: string): Promise<AtlasResponse> {
     if (!API_URL) {
         throw new Error("VITE_ATLAS_API_URL not defined");
     }
 
-    if (!API_KEY) {
-        throw new Error("VITE_ATLAS_API_KEY not defined");
+    const token = getToken();
+
+    if (!token) {
+        throw new Error("No invite token present");
     }
 
     const response = await fetch(`${API_URL}/research/run`, {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
-            "X-API-Key": API_KEY,
+            Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({ topic }),
     });
 
     if (!response.ok) {
         if (response.status === 401) {
-            throw new Error("Unauthorized (invalid API key)");
+            clearToken();
+            throw new Error("Unauthorized");
         }
         if (response.status === 429) {
             throw new Error("Rate limit exceeded");
@@ -38,4 +41,3 @@ export async function runAnalysis(topic: string): Promise<AtlasResponse> {
 
     return data as AtlasResponse;
 }
-

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Box, Typography, Alert, CircularProgress } from "@mui/material";
 import { runAnalysis } from "../api/atlasClient";
-import { AtlasResponse } from "../types/atlas";
+import type { AtlasResponse } from "../types/atlas";
 import AnalysisForm from "../components/AnalysisForm";
 import ResultsPanel from "../components/ResultsPanel";
 
