@@ -1,22 +1,34 @@
 import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { Box, Typography, Alert, CircularProgress } from "@mui/material";
-import { runAnalysis } from "../api/atlasClient";
-import type { AtlasResponse } from "../types/atlas";
+import { runAnalysis, getHistoryRuns, getRunDetail } from "../api/atlasClient";
+import type { AtlasResponse, RunDetail } from "../types/atlas";
 import AnalysisForm from "../components/AnalysisForm";
 import ResultsPanel from "../components/ResultsPanel";
+
+function toAtlasResponse(detail: RunDetail): AtlasResponse | null {
+    const r = detail.result;
+    if (!r?.executive_summary) return null;
+    return {
+        executive_summary: r.executive_summary,
+        market_overview: r.market_overview,
+        competitors: r.competitors,
+        opportunities: r.opportunities,
+        risks: r.risks,
+        verdict: r.verdict,
+        latency: r.latency,
+        eval_scores: r.eval_scores,
+        metrics: detail.metrics,
+        governance: detail.governance,
+    };
+}
 
 export default function RunAnalysisPage() {
     const [response, setResponse] = useState<AtlasResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
-
     const [apiHealthy, setApiHealthy] = useState<boolean | null>(null);
-
-    // useEffect(() => {
-    //     fetch(`${import.meta.env.VITE_ATLAS_API_URL}/health`)
-    //         .then((r) => setApiHealthy(r.ok))
-    //         .catch(() => setApiHealthy(false));
-    // }, []);
+    const location = useLocation();
 
     useEffect(() => {
         const checkHealth = () => {
@@ -31,18 +43,28 @@ export default function RunAnalysisPage() {
         return () => clearInterval(interval);
     }, []);
 
+    useEffect(() => {
+        if (response) return; // don't overwrite a fresh run result
+        getHistoryRuns(1)
+            .then((runs) => {
+                if (runs.length === 0) return;
+                return getRunDetail(runs[0].run_id).then((detail) => {
+                    const mapped = toAtlasResponse(detail);
+                    if (mapped) setResponse(mapped);
+                });
+            })
+            .catch(() => {
+                // silently ignore — empty state is fine
+            });
+    }, [location.pathname]);
 
     const handleRun = async (topic: string) => {
         setLoading(true);
         setError(null);
         setResponse(null);
 
-
         try {
             const result = await runAnalysis(topic);
-
-            console.log("API response:", result); // DEBUG
-
             setResponse(result);
         } catch (err: any) {
             setError(err.message || "Unexpected error");
@@ -62,15 +84,13 @@ export default function RunAnalysisPage() {
                 boxShadow: 2,
             }}
         >
-
-        <Typography variant="h4" gutterBottom>
+            <Typography variant="h4" gutterBottom>
                 Atlas Analyst Dashboard
             </Typography>
 
             <Typography variant="body2" color="text.secondary" mb={2}>
                 Agentic market research powered by Atlas
             </Typography>
-
 
             <Typography
                 variant="body2"
@@ -91,12 +111,9 @@ export default function RunAnalysisPage() {
                     : "Atlas API Offline"}
             </Typography>
 
-
-
             <Box mb={3}>
                 <AnalysisForm onRun={handleRun} loading={loading} />
             </Box>
-
 
             {loading && (
                 <Box mt={3}>
@@ -118,4 +135,3 @@ export default function RunAnalysisPage() {
         </Box>
     );
 }
-

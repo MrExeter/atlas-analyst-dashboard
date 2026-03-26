@@ -1,18 +1,29 @@
-import { Admin, Layout, CustomRoutes } from "react-admin";
+import { Admin, Layout, CustomRoutes, Menu, MenuItemLink } from "react-admin";
 import type { LayoutProps } from "react-admin";
 
 import { Route } from "react-router-dom";
 import RunAnalysisPage from "./pages/RunAnalysisPage";
+import HistoryPage from "./pages/HistoryPage";
+import RunDetailPage from "./pages/RunDetailPage";
 
 import { useEffect, useState } from "react";
 import { getToken } from "./auth/token";
 import AuthModal from "./components/AuthModal";
 
 import { AppBar } from "./components/AppBar";
+import PlayArrowIcon from "@mui/icons-material/PlayArrow";
+import HistoryIcon from "@mui/icons-material/History";
+
+const CustomMenu = () => (
+    <Menu>
+        <MenuItemLink to="/" primaryText="Run" leftIcon={<PlayArrowIcon />} />
+        <MenuItemLink to="/history" primaryText="History" leftIcon={<HistoryIcon />} />
+    </Menu>
+);
 
 // Custom layout with proper typing
 const CustomLayout: React.FC<LayoutProps> = (props) => (
-    <Layout {...props} appBar={AppBar} />
+    <Layout {...props} appBar={AppBar} menu={CustomMenu} />
 );
 
 const dataProvider = {
@@ -44,11 +55,12 @@ export default function App() {
         <Admin
             layout={CustomLayout}
             dataProvider={dataProvider as any}
-            dashboard={RunAnalysisPage}
             requireAuth={false}
         >
             <CustomRoutes>
                 <Route path="/" element={<RunAnalysisPage />} />
+                <Route path="/history" element={<HistoryPage />} />
+                <Route path="/history/:run_id" element={<RunDetailPage />} />
             </CustomRoutes>
         </Admin>
     );
