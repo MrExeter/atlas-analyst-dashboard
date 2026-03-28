@@ -1,5 +1,17 @@
 export type Verdict = "PASS" | "WARN" | "FAIL";
 
+export interface EvidenceItem {
+    title: string;
+    url: string;
+    domain: string;
+}
+
+export interface EvidenceCluster {
+    cluster_id: string;
+    label: string;
+    sources: EvidenceItem[];
+}
+
 export interface AtlasResponse {
     executive_summary: string;
     market_overview?: string;
@@ -11,6 +23,8 @@ export interface AtlasResponse {
     latency?: number;
     metrics?: UsageMetrics;
     governance?: Record<string, unknown>;
+    evidence?: EvidenceItem[];
+    evidence_clusters?: EvidenceCluster[];
 }
 
 export interface HistoryRun {
@@ -57,6 +71,8 @@ export interface RunDetail {
     metrics?: UsageMetrics;
     governance_metrics?: GovernanceMetrics;
     total_cost_usd?: number | null;
+    evidence?: EvidenceItem[];
+    evidence_clusters?: EvidenceCluster[];
     // full report payload stored by backend
     result?: {
         executive_summary?: string;

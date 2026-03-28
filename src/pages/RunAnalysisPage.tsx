@@ -20,6 +20,8 @@ function toAtlasResponse(detail: RunDetail): AtlasResponse | null {
         eval_scores: r.eval_scores,
         metrics: detail.metrics,
         governance: detail.governance,
+        evidence: detail.evidence,
+        evidence_clusters: detail.evidence_clusters,
     };
 }
 

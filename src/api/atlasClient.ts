@@ -43,6 +43,8 @@ export async function runAnalysis(topic: string): Promise<AtlasResponse> {
     const payload = data?.result ?? data;
     if (data?.metrics) payload.metrics = data.metrics;
     if (data?.governance) payload.governance = data.governance;
+    if (data?.evidence) payload.evidence = data.evidence;
+    if (data?.evidence_clusters) payload.evidence_clusters = data.evidence_clusters;
     return payload as AtlasResponse;
 }
 

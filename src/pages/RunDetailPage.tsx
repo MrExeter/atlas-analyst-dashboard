@@ -17,6 +17,8 @@ import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { getRunDetail } from "../api/atlasClient";
 import type { RunDetail, Verdict } from "../types/atlas";
 import VerdictBadge from "../components/VerdictBadge";
+import SourcesSection from "../components/SourcesSection";
+import EvidenceClusterSection from "../components/EvidenceClusterSection";
 
 function renderContent(content: unknown): React.ReactNode {
     if (content == null) return null;
@@ -194,6 +196,9 @@ export default function RunDetailPage() {
                             </>
                         );
                     })()}
+
+                    <SourcesSection providers={detail.metrics?.providers_used} />
+                    <EvidenceClusterSection evidence_clusters={detail.evidence_clusters} evidence={detail.evidence} />
 
                     {/* Usage Metrics */}
                     {detail.metrics && (

@@ -14,6 +14,8 @@ import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
 import type { AtlasResponse, Verdict } from "../types/atlas";
 import VerdictBadge from "./VerdictBadge";
 import DownloadJsonButton from "./DownloadJsonButton";
+import SourcesSection from "./SourcesSection";
+import EvidenceClusterSection from "./EvidenceClusterSection";
 
 interface ResultsPanelProps {
     response: AtlasResponse;
@@ -175,6 +177,9 @@ export default function ResultsPanel({ response }: ResultsPanelProps) {
                     </List>
                 </>
             )}
+
+            <SourcesSection providers={metrics?.providers_used} />
+            <EvidenceClusterSection evidence_clusters={response.evidence_clusters} evidence={response.evidence} />
 
             {metrics && (
                 <>
