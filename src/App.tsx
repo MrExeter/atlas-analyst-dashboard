@@ -7,7 +7,7 @@ import HistoryPage from "./pages/HistoryPage";
 import RunDetailPage from "./pages/RunDetailPage";
 
 import { useEffect, useState } from "react";
-import { getToken } from "./auth/token";
+import { getToken, clearToken } from "./auth/token";
 import AuthModal from "./components/AuthModal";
 
 import { AppBar } from "./components/AppBar";
@@ -42,9 +42,25 @@ export default function App() {
     const [authenticated, setAuthenticated] = useState(false);
 
     useEffect(() => {
-        if (getToken()) {
-            setAuthenticated(true);
-        }
+        const token = getToken();
+        if (!token) return;
+
+        // validate stored token is still accepted by the API
+        fetch(`${import.meta.env.VITE_ATLAS_API_URL}/health`, {
+            headers: { Authorization: `Bearer ${token}` },
+        })
+            .then((r) => {
+                if (r.ok) {
+                    setAuthenticated(true);
+                } else {
+                    clearToken();
+                }
+            })
+            .catch(() => {
+                // network error — keep token, let user proceed
+                // avoids locking out users when API is temporarily unreachable
+                setAuthenticated(true);
+            });
     }, []);
 
     if (!authenticated) {
